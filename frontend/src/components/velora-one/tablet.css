@@ -101,16 +101,20 @@
 .one-preview-page { min-height: 100svh; background: #0c0e10; }
 .one-preview-toolbar { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; padding: 12px 24px; border-bottom: 1px solid var(--border); color: #c8baa3; font-size: 12px; }
 .one-preview-toolbar a { min-height: 44px; display: inline-flex; align-items: center; gap: 8px; }
-.one-simulator { width: min(1440px,97vw); max-width: none; max-height: 96dvh; padding: 16px; border: 1px solid #d4b88a40; border-radius: 18px; color: #f3eee5; background: #17191c; overflow: auto; }
-.one-simulator::backdrop { background: #000d; backdrop-filter: blur(7px); }
-.one-simulator-toolbar { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; padding: 2px 5px 16px; }
+/* showModal() puts this fixed overlay in the top layer, outside parent clipping
+   and stacking contexts. Set margins explicitly because Tailwind resets them. */
+.one-simulator { position: fixed; inset: 0; z-index: 1000; width: 100%; height: 100dvh; max-width: none; max-height: none; margin: 0; padding: clamp(8px,2vmin,24px); border: 0; color: #f3eee5; background: transparent; overflow: hidden; }
+.one-simulator[open] { display: grid; grid-template-columns: minmax(0,1fr); grid-template-rows: minmax(0,1fr); place-items: center; }
+.one-simulator::backdrop { background: #000b; backdrop-filter: blur(4px); }
+.one-simulator-panel { display: flex; flex-direction: column; width: min(1440px,100%,max(480px,calc((100dvh - 180px) * 1.6))); min-width: 0; min-height: 0; max-height: 100%; padding: 16px; border: 1px solid #d4b88a40; border-radius: 18px; background: #17191c; overflow: auto; overscroll-behavior: contain; }
+.one-simulator-toolbar { display: flex; flex-shrink: 0; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; padding: 2px 5px 16px; }
 .one-simulator-toolbar h2 { font-size: 15px; font-weight: 500; margin: 0; }
 .one-simulator-controls { display: flex; flex-wrap: wrap; gap: 10px; }
 .one-simulator-controls :is(a,button) { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; padding: 9px 13px; border: 1px solid var(--border); border-radius: 7px; background: #101214; color: var(--gold); font: inherit; font-size: 12px; }
-.one-tablet-frame { position: relative; padding: 22px 18px 28px; border: 2px solid #515254; border-radius: 29px; background: linear-gradient(140deg,#292b2c,#08090a 30%,#111214 75%,#343433); box-shadow: inset 0 0 0 5px #111,0 18px 65px #0009; }
+.one-tablet-frame { position: relative; display: flex; flex: 0 1 auto; aspect-ratio: 16 / 10; min-height: min(300px,45dvh); padding: 22px 18px 28px; border: 2px solid #515254; border-radius: 29px; background: linear-gradient(140deg,#292b2c,#08090a 30%,#111214 75%,#343433); box-shadow: inset 0 0 0 5px #111,0 18px 65px #0009; }
 .one-tablet-camera { position: absolute; top: 8px; left: calc(50% - 3px); width: 6px; height: 6px; border: 1px solid #3f444a; border-radius: 50%; background: #080a0e; }
-.one-tablet-screen { height: min(780px,76dvh); overflow: auto; overscroll-behavior: contain; border: 1px solid #000; border-radius: 13px; }
-.one-simulator-hint { font-size: 11px; color: #aaa69e; margin: 14px 5px 0; }
+.one-tablet-screen { flex: 1; min-width: 0; min-height: 0; overflow: auto; overscroll-behavior: contain; border: 1px solid #000; border-radius: 13px; }
+.one-simulator-hint { flex-shrink: 0; font-size: 11px; color: #aaa69e; margin: 14px 5px 0; }
 .one-supplies { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 20px; }
 .one-supplies progress { margin: 12px 0 8px; }
 .one-supplies small { color: #b2b0aa; }
@@ -153,8 +157,8 @@ button.module-preview-link { background: transparent; min-height: 46px; }
   .one-feature-room > strong { font-size: 38px; }
 }
 @media (max-width: 600px) {
-  .one-simulator { width: 100%; max-height: 100dvh; border-radius: 0; padding: 10px; }
+  .one-simulator-panel { width: 100%; border-radius: 14px; padding: 10px; }
   .one-simulator-toolbar { padding-bottom: 12px; }
-  .one-tablet-frame { border-radius: 20px; padding: 20px 7px 17px; }
-  .one-tablet-screen { height: 70dvh; border-radius: 9px; }
+  .one-tablet-frame { flex: none; aspect-ratio: auto; height: min(520px,60dvh); border-radius: 20px; padding: 20px 7px 17px; }
+  .one-tablet-screen { border-radius: 9px; }
 }

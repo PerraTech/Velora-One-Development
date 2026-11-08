@@ -100,6 +100,36 @@ try {
   await navigate("/portal/velora-one");
   await click("Open Tablet Simulator");
   await waitFor("document.querySelector('.one-simulator').open");
+  // The fullscreen native dialog must center its panel independently of the
+  // scrolled module page and any parent clipping or transformed containing block.
+  await evaluate("(() => { const parent = document.querySelector('.development-panel'); parent.style.transform = 'translate(25px, 15px)'; parent.style.overflow = 'hidden'; parent.style.position = 'relative'; parent.style.zIndex = '1'; })()");
+  for (const [width, height] of [[1920, 1080], [1366, 768], [1280, 800], [1024, 768], [768, 1024], [390, 844], [320, 568], [812, 375]]) {
+    await viewport(width, height); await sleep(150);
+    const geometry = await evaluate(`(() => {
+      const dialog = document.querySelector('.one-simulator');
+      const panel = dialog.querySelector('.one-simulator-panel');
+      const frame = dialog.querySelector('.one-tablet-frame').getBoundingClientRect();
+      const overlay = dialog.getBoundingClientRect();
+      const box = panel.getBoundingClientRect();
+      const screen = dialog.querySelector('.one-tablet-screen');
+      return { fixed: getComputedStyle(dialog).position === 'fixed', fullscreen: Math.abs(overlay.left) < 1 && Math.abs(overlay.top) < 1 && Math.abs(overlay.width - innerWidth) < 1 && Math.abs(overlay.height - innerHeight) < 1,
+        centered: Math.abs((box.left + box.right) / 2 - innerWidth / 2) < 2 && Math.abs((box.top + box.bottom) / 2 - innerHeight / 2) < 2,
+        contained: box.left >= 0 && box.top >= 0 && box.right <= innerWidth + 1 && box.bottom <= innerHeight + 1,
+        noOverflow: panel.scrollWidth <= panel.clientWidth && screen.scrollWidth <= screen.clientWidth,
+        topLayer: document.elementFromPoint(1, 1) === dialog,
+        ratio: frame.width / frame.height,
+        innerScrollable: screen.scrollHeight > screen.clientHeight };
+    })()`);
+    for (const property of ["fixed", "fullscreen", "centered", "contained", "noOverflow", "topLayer", "innerScrollable"]) assert.ok(geometry[property], `${width}x${height}: ${property} ${JSON.stringify(geometry)}`);
+    if (width >= 1024 && height >= 768) assert.ok(Math.abs(geometry.ratio - 1.6) < .08, `Tablet aspect ratio at ${width}x${height}`);
+    await screenshot(`simulator-${width}x${height}.png`);
+  }
+  await viewport(1366, 768);
+  await click("Sluiten");
+  await evaluate("window.scrollTo(0, document.documentElement.scrollHeight)");
+  await click("Open Tablet Simulator");
+  await waitFor("document.querySelector('.one-simulator').open");
+  assert.ok(await evaluate("(() => { const box = document.querySelector('.one-simulator-panel').getBoundingClientRect(); return Math.abs((box.top + box.bottom) / 2 - innerHeight / 2) < 2; })()"), "Centered after page scroll and reopen");
   assert.equal(await evaluate("document.activeElement.getAttribute('aria-label')"), "Tablet Simulator sluiten");
   assert.ok(await evaluate("!!document.querySelector('.one-simulator .one-app')"));
   for (let index = 0; index < 20; index++) { await send("Input.dispatchKeyEvent", { type: "keyDown", key: "Tab", code: "Tab", windowsVirtualKeyCode: 9 }); await send("Input.dispatchKeyEvent", { type: "keyUp", key: "Tab", code: "Tab", windowsVirtualKeyCode: 9 }); assert.ok(await evaluate("document.querySelector('.one-simulator').contains(document.activeElement)"), "Focus stays in dialog"); }
@@ -123,7 +153,7 @@ try {
     const response = await fetch(base + route); assert.equal(response.status, 200, route);
   }
   assert.deepEqual(errors, [], "No browser runtime exceptions");
-  console.log(`PASS: tablet workflows, filters, DND, settings/reset, responsive overflow, modal focus/Escape/close/fullscreen, seven module statuses and preserved routes. Screenshots: ${artifacts}`);
+  console.log(`PASS: tablet workflows, filters, DND, settings/reset, responsive overflow, modal centering at 1920x1080/1366x768 and six tablet/mobile sizes, transformed/clipped parent, page scroll, focus/Escape/close/fullscreen, seven module statuses and preserved routes. Screenshots: ${artifacts}`);
 } finally {
   socket?.close();
   chrome.kill();

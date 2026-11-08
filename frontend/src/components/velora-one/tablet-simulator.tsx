@@ -40,9 +40,11 @@ export function TabletSimulator() {
   return <>
     <button type="button" ref={triggerRef} className="module-preview-link" aria-haspopup="dialog" onClick={show}><Tablet size={18} aria-hidden="true" />Open Tablet Simulator</button>
     <dialog ref={dialogRef} className="one-simulator" aria-labelledby={titleId} aria-describedby={hintId} onKeyDown={trapFocus} onClose={() => { setOpen(false); triggerRef.current?.focus(); }}>
+      <div className="one-simulator-panel">
       <div className="one-simulator-toolbar"><h2 id={titleId}>VELORA ONE · Tablet Simulator</h2><div className="one-simulator-controls"><Link href="/previews/velora-one"><Expand size={16} aria-hidden="true" />Open volledig scherm</Link><button type="button" ref={closeRef} aria-label="Tablet Simulator sluiten" onClick={() => dialogRef.current?.close()}><X size={18} aria-hidden="true" />Sluiten</button></div></div>
       <div className="one-tablet-frame"><span className="one-tablet-camera" aria-hidden="true" /><div className="one-tablet-screen">{mounted && <TabletApp />}</div></div>
       <p id={hintId} className="one-simulator-hint">Interactieve frontend met gesimuleerde gegevens. Druk op Escape om te sluiten.</p>
+      </div>
     </dialog>
   </>;
 }
