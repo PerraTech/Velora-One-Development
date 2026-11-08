@@ -22,6 +22,7 @@ next-env.d.ts
 .codex/
 .agents/
 .vercel/
+.netlify/
 secrets/
 credentials/
 *.pem

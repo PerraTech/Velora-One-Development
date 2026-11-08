@@ -1,0 +1,9 @@
+# Build the app in frontend; publish is relative to that base directory.
+[build]
+  base = "frontend"
+  command = "npm run build"
+  publish = ".next"
+
+# Explicitly enable the official Next.js/OpenNext runtime for this existing site.
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
