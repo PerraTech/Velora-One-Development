@@ -54,7 +54,7 @@ npm run start
 
 ## Demo en routes
 
-De login gebruikt uitsluitend in lokale frontendontwikkeling (`npm run dev`, `NODE_ENV=development`) een mock-login met deze fictieve testaccounts:
+De login gebruikt zowel lokaal als in de online Netlify-productionbuild dezelfde demo-login met deze fictieve testaccounts:
 
 | E-mailadres | Wachtwoord | Rol in het portaal |
 | --- | --- | --- |
@@ -65,7 +65,7 @@ Alleen een exact overeenkomend account wordt doorgestuurd naar `/portal`. Spatie
 
 Alleen het e-mailadres wordt in `sessionStorage` bewaard, zodat de bijbehorende rol en het e-mailadres na verversen en op modulepagina's zichtbaar blijven. De rol is uitsluitend een weergavelabel en geeft geen rechten. Wachtwoorden worden niet in browseropslag opgeslagen of verzonden. Uitloggen verwijdert de lokale accountkeuze en navigeert naar `/login`. De oude testaccounts worden niet meer geaccepteerd; een oude accountkeuze in browseropslag wordt niet hersteld.
 
-**Dit is geen echte authenticatie en biedt geen beveiliging.** De credentials staan leesbaar in de frontendbroncode en zijn niet veilig of geheim. De testaccounts zijn openbare, fictieve frontenddata en mogen niet voor productie worden gebruikt. In de productiebuild (`npm run build` / `npm run start`) zijn de testaccounts uitgeschakeld en werkt de mock-login niet. Er is geen backend, database of servervalidatie. Alle portaalroutes blijven direct toegankelijk; browseropslag en eventuele client-side routecontrole zijn aanpasbaar en vormen geen toegangsbeveiliging. **Voordat de applicatie online wordt gepubliceerd, moet deze mock-login worden vervangen door server-side authenticatie en autorisatie.** Alleen de mock-login uitschakelen beveiligt het portaal niet.
+**Dit is uitsluitend demo-authenticatie en biedt geen beveiliging.** De credentials staan bewust leesbaar in de frontendbroncode en de productie-JavaScriptbundel en zijn niet veilig of geheim. De testaccounts zijn openbare, fictieve frontenddata. De demo-login werkt ook via `npm run build` / `npm run start` en op Netlify. Er is geen backend, database of servervalidatie. Alle portaalroutes blijven direct toegankelijk; browseropslag en eventuele client-side routecontrole zijn aanpasbaar en vormen geen toegangsbeveiliging. **Toegang tot de Netlify-site moet afzonderlijk via Netlify Visitor Access worden afgeschermd.** De demo-login configureert die bescherming niet en mag niet als beveiligingsmaatregel worden beschouwd.
 
 | Route | Pagina |
 | --- | --- |
@@ -87,7 +87,7 @@ VELORA ONE Tablet heeft status `preview` en een interactieve frontend via `/prev
 - `frontend/src/app/`: App Router-pagina's, metadata, 404 en globale CSS.
 - `frontend/src/components/`: herbruikbare merkweergave, mock-login, shell, modulekaarten, badges, footer en teruglink.
 - `frontend/src/lib/modules.ts`: centrale mockdata voor zeven modules.
-- `frontend/src/lib/mock-login.ts`: uitsluitend lokale testaccounts en accountkeuze in browseropslag.
+- `frontend/src/lib/mock-login.ts`: fictieve demoaccounts voor lokale en online builds en accountkeuze in browseropslag.
 - `frontend/public/images/`: zes lokale conceptbeelden.
 - `frontend/run-local.ps1`: lokale Windows-startoptie voor gesynchroniseerde schijven.
 - `backend/README.md`: gereserveerd voor toekomstige ontwikkeling.
@@ -108,6 +108,10 @@ Alle onderstaande originelen staan in `Fotos/` en zijn ongewijzigd:
 | dock-concept.jpeg | WhatsApp Image 2026-11-07 at 18.41.41.jpeg |
 
 ## Verificatie
+
+De eerdere controles hieronder zijn historisch: de blokkade van demoaccounts in productie is inmiddels verwijderd. Dezelfde fictieve accounts werken nu ook in de Netlify-demo; echte toegangsbeperking blijft afzonderlijk bij Netlify Visitor Access.
+
+Online demo-login (8 november 2026): lint, TypeScript, production build en drie gerichte logictests geslaagd. Chrome-controle tegen de lokale productionbuild: beide demoaccounts, lege/onjuiste gegevens, wachtwoordzichtbaarheid, loadingstatus, navigatie naar `/portal`, sessiebehoud na herladen, openen van de VELORA ONE Tablet Simulator en logout geslaagd, zonder JavaScript-runtimefouten. De testcommando's staan in `frontend/README.md`.
 
 Account- en rolwijziging (8 november 2026): beide nieuwe accounts, rol en e-mailadres, sessieherstel en uitloggen gecontroleerd. Oude accounts en oude opgeslagen accountkeuzes worden geweigerd. Onjuiste/lege gegevens en uitgeschakelde productieaccounts zijn gecontroleerd. De nieuwe credentials ontbreken in de productie-JavaScriptbundels. TypeScript-controle geslaagd; geen visuele browsercontrole uitgevoerd.
 

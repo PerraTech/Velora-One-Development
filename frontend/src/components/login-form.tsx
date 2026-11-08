@@ -3,7 +3,7 @@
 import { useState, useRef, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { Eye, EyeOff, ArrowRight, UserRound, KeyRound, LoaderCircle } from "lucide-react";
-import { mockLoginEnabled, signInMock } from "@/lib/mock-login";
+import { signInMock } from "@/lib/mock-login";
 
 export function LoginForm() {
   const [visible, setVisible] = useState(false);
@@ -25,10 +25,6 @@ export function LoginForm() {
     setErrors(next);
     if (next.username) { usernameRef.current?.focus(); return; }
     if (next.password) { passwordRef.current?.focus(); return; }
-    if (!mockLoginEnabled) {
-      setLoginError("De mock-login is alleen beschikbaar voor lokale frontendontwikkeling.");
-      return;
-    }
     submittingRef.current = true;
     setLoading(true);
     try {

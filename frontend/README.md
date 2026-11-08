@@ -1,8 +1,10 @@
 # VELORA frontend
 
-Zie [de project-README](../README.md) voor installatie, routes, lokale mock-login, fictieve testaccounts en het bestandenoverzicht. De mock-login werkt uitsluitend via `npm run dev` en biedt geen echte authenticatie of beveiliging. De credentials staan leesbaar in de frontendbroncode en zijn niet veilig. Gebruik de testaccounts niet voor productie en vervang de mock-login door server-side authenticatie en autorisatie voordat de applicatie online wordt gepubliceerd.
+Zie [de project-README](../README.md) voor installatie, routes, demo-login, fictieve testaccounts en het bestandenoverzicht. De demo-login werkt zowel via `npm run dev` als in de productionbuild op Netlify. Dit is uitsluitend demo-authenticatie en biedt geen beveiliging. De fictieve credentials staan bewust leesbaar in de frontendbundel. Toegang tot de Netlify-site moet afzonderlijk via Netlify Visitor Access worden afgeschermd; de demo-login regelt dit niet en verleent geen echte rechten.
 
 Snel starten op Windows / Google Drive: voer in deze map .\run-local.ps1 uit.
+
+Gerichte demo-logincontroles: `node --test tests/mock-login.test.cjs` test beide accounts met `NODE_ENV=production`, onjuiste gegevens, sessieherstel en logout. Start na `npm run build` een productionserver met `npm run start -- -p 3008`; voer in een tweede terminal `node tests/mock-login-browser.mjs` uit voor validatie, laden, wachtwoordzichtbaarheid, inloggen naar `/portal`, sessiebehoud, de Tablet Simulator en logout in Chrome. De browsertest gebruikt uitsluitend de bekende fictieve demoaccounts. `TEST_BASE_URL` kan een andere bereikbare demo-omgeving aanwijzen.
 
 ## Netlify-deployment
 
@@ -25,7 +27,7 @@ Controleer in Netlify **Project configuration > Developer settings > Continuous 
 
 De rootconfiguratie bepaalt base, command, publish en de runtime; houd eventuele dashboardwaarden hiermee gelijk. Verwijder een eventueel ingestelde `NETLIFY_NEXT_PLUGIN_SKIP` uit de buildomgeving en de toepasselijke deploycontexten: `true` of `1` schakelt de adapter uit. Gebruik de huidige runtime v5, geen legacy v4. Een extra UI-installatie van dezelfde plugin is niet nodig bij de expliciete bestandsconfiguratie. Laat devDependencies tijdens de build installeren.
 
-Na goedkeuring, commit en push: kies **Clear cache and deploy site** in Netlify. Controleer dat de log `Using Next.js Runtime` vermeldt, de adapterhooks uitvoert en de `___netlify-server-handler` bundelt. Voor deze app hoort er een serverfunctie te zijn, ook al worden pagina's vooraf gegenereerd. Alleen een geslaagde `next build` en een upload van `.next` zijn onvoldoende. Controleer daarna `/` (redirect naar `/login`), `/login`, `/portal/velora-one`, `/previews/velora-one` en de frontendassets. De bestaande mock-login blijft, zoals eerder, uitsluitend beschikbaar in development.
+Na goedkeuring, commit en push: kies **Clear cache and deploy site** in Netlify. Controleer dat de log `Using Next.js Runtime` vermeldt, de adapterhooks uitvoert en de `___netlify-server-handler` bundelt. Voor deze app hoort er een serverfunctie te zijn, ook al worden pagina's vooraf gegenereerd. Alleen een geslaagde `next build` en een upload van `.next` zijn onvoldoende. Controleer daarna `/` (redirect naar `/login`), `/login`, `/portal/velora-one`, `/previews/velora-one` en de frontendassets. De demo-login werkt ook in de productionbuild; toegangsbeperking hoort bij Netlify Visitor Access.
 
 Lokale controle vanuit de repositoryroot met een geïnstalleerde Netlify CLI: `netlify build --offline --dry` controleert de configuratie en de pluginvolgorde; `netlify build --offline` voert de build inclusief adapter uit zonder deploy. `.netlify/` bevat lokale status en gegenereerde adapterbestanden en is uitgesloten van Git. De ongebruikte lokale root-lockfile is eveneens uitgesloten; de deploy gebruikt de frontend-lockfile.
 
